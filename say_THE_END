@@ -1,0 +1,12 @@
+#!/bin/bash
+if [ "" = "$1" ]; then
+  MSG="SANSEACABÓ!"
+else
+  MSG="$*"
+fi
+
+echo;echo;echo;echo;echo;echo;echo
+echo "                         $MSG"
+echo;echo;echo;echo
+echo "Press RETURN..."
+read a
