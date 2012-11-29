@@ -11,7 +11,7 @@
 TMP=/tmp/filter-history.tmp
 INITIAL_LINES=`cat $1 |wc -l`
 
-# Remove_directory_or_filesystem_operations
+# Remove directory or filesystem operations
 cat $1 \
   | grep -v cd    \
   | grep -v df    \
@@ -24,7 +24,7 @@ cat $1 \
   > ${TMP}
 mv ${TMP} $1 
 
-# Remove_basic_text_file_operations
+# Remove basic text file operations
 cat $1 \
   | grep -v cat  \
   | grep -v diff \
@@ -33,20 +33,20 @@ cat $1 \
   > ${TMP}
 mv ${TMP} $1 
 
-# Remove_cat_+_Ctrl-D_editing
+# Remove cat + Ctrl-D editing
 cat $1 \
   | grep -v 'cat ->' \
   > ${TMP}
 mv ${TMP} $1 
 
-# Remove_image-related_operations
+# Remove image-related operations
 cat $1 \
   | grep -v jpg \
   | grep -v png \
   > ${TMP}
 mv ${TMP} $1 
 
-# Remove_video-related_operations
+# Remove video-related operations
 cat $1 \
   | grep -v mpg    \
   | grep -v mpg123 \
@@ -58,13 +58,13 @@ cat $1 \
   > ${TMP}
 mv ${TMP} $1 
 
-# Remove_man_page_viewing
+# Remove man page viewing
 cat $1 \
   | grep -v "man " \
   > ${TMP}
 mv ${TMP} $1 
 
-# Remove_email_check
+# Remove email check
 cat $1 \
   | grep -v mutt \
   | grep -v tar  \
@@ -79,13 +79,13 @@ cat $1 \
   > ${TMP}
 mv ${TMP} $1 
 
-# Remove_anything_related_to_the_tmp_dir
+# Remove anything related to the tmp dir
 cat $1 \
   | grep -v "\/tmp\/" \
   > ${TMP}
 mv ${TMP} $1 
 
-# Remove_anything_related_to_version_control
+# Remove anything related to version control
 cat $1 \
   | grep -v "^git" \
   | grep -v "^hg"  \
