@@ -1,0 +1,43 @@
+#!/bin/sh
+
+help() {
+    echo "This script takes a file in the form"
+    echo "  Text description_1, url_1"
+    echo "  Text description_2, url_2" 
+    echo "  Text description_3, url_3"
+    echo "  ..."
+    echo "  Text description_n, url_n"
+    echo 
+    echo "It then creates a set of directories using the"
+    echo "text descriptions. In each of them, it leaves "
+    echo "all the files referenced in the corresponding"
+    echo "URL. "
+}
+
+usage() {
+    echo "bajarContenido [-h|<file>]"
+}
+
+## Command line analysis
+if [ "$1" = "-h" ]; then help; exit 0; fi
+if [ ! $1 -o ! -r $1 -o "$2" ]; then usage; exit 0; fi
+
+# Main program
+LOGFILE=/tmp/takeContent.log.txt
+WGET_OPT="-c -a $LOGFILE -t 15 -l 10"
+WGET_OPT="${WGET_OPT} -r -nd --follow-tags=a --reject \"*html,*htm,*mov\""
+FILE=urls.txt
+SIZE=`wc -l $FILE |awk '{print($1)}'`
+I=0
+while ((I < $SIZE)); do 
+    LINE=`head -n$((I+1)) $FILE |tail -n1`
+    NAME=`echo $LINE |awk 'BEGIN{FS=","}{print($1)}'`
+    URL=`echo $LINE |awk 'BEGIN{FS=","}{print($2)}'`
+    echo "Getting $NAME..."
+    mkdir "$NAME"
+    cd "$NAME"
+    wget ${WGET_OPT} $URL
+    cd ..
+    I=$((I+1))
+done
+    
