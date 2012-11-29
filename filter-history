@@ -1,0 +1,132 @@
+#!/bin/sh
+######################################
+# Script that filters a history
+# (typ. .bash_history) to get rid
+# of the clutter and leave only 
+# the commands that we may want
+# to reuse some weeks (or months)
+# later. 
+######################################
+
+TMP=/tmp/filter-history.tmp
+INITIAL_LINES=`cat $1 |wc -l`
+
+# Remove_directory_or_filesystem_operations
+cat $1 \
+  | grep -v cd    \
+  | grep -v df    \
+  | grep -v hog   \
+  | grep -v "^ls" \
+  | grep -v mkdir \
+  | grep -v mount \
+  | grep -v mv    \
+  | grep -v ^rm   \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove_basic_text_file_operations
+cat $1 \
+  | grep -v cat  \
+  | grep -v diff \
+  | grep -v echo \
+  | grep -v less \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove_cat_+_Ctrl-D_editing
+cat $1 \
+  | grep -v 'cat ->' \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove_image-related_operations
+cat $1 \
+  | grep -v jpg \
+  | grep -v png \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove_video-related_operations
+cat $1 \
+  | grep -v mpg    \
+  | grep -v mpg123 \
+  | grep -v part   \
+  | grep -v player \
+  | grep -v totem  \
+  | grep -v wmv    \
+  | grep -v zip    \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove_man_page_viewing
+cat $1 \
+  | grep -v "man " \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove_email_check
+cat $1 \
+  | grep -v mutt \
+  | grep -v tar  \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove machine hopping and searching
+cat $1 \
+  | grep -v "^host " \
+  | grep -v "^ssh "  \
+  | grep -v wget     \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove_anything_related_to_the_tmp_dir
+cat $1 \
+  | grep -v "\/tmp\/" \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove_anything_related_to_version_control
+cat $1 \
+  | grep -v "^git" \
+  | grep -v "^hg"  \
+  | grep -v "^svn" \
+  | grep -v "^cvs" \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove launching editors from the command line
+cat $1 \
+  | grep -v "^emacs " \
+  | grep -v "^jed "   \
+  | grep -v "^vi "    \
+  | grep -v "^vim "   \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove compiling from the command line
+cat $1 \
+  | grep -v "^gcc"    \
+  | grep -v "^javac"  \
+  | grep -v "^make "  \
+  > ${TMP}
+mv ${TMP} $1 
+
+# Remove other misc commans too short or too specific to be ever reused
+cat $1 \
+  | grep -v "^bc"    \
+  | grep -v "^clear" \
+  | grep -v "^sl"    \
+  > ${TMP}
+mv ${TMP} $1 
+
+cat $1 |sort |uniq > ${TMP}
+mv ${TMP} $1 
+
+FINAL_LINES=`cat $1 |wc -l`
+RATIO_LINES=$((FINAL_LINES * 100 / INITIAL_LINES))
+UNIQUE_COMMANDS=`cat $1 |awk '{print($1)}' |uniq |wc -l`
+UNIQUENESS_RATIO=$((UNIQUE_COMMANDS * 100 / FINAL_LINES))
+echo "Left $FINAL_LINES lines out of $INITIAL_LINES ($RATIO_LINES%, $UNIQUE_COMMANDS unique commands)"
+if [ $UNIQUENESS_RATIO -le 50 ]; then
+    echo "Maybe you should clean $1 manually. There are many repeated commands.";
+fi
