@@ -1,0 +1,9 @@
+#!/bin/sh
+#DATE=`date -I`
+#for FILENAME in $@; do
+#  # echo -n "Moving $FILENAME to Trash..."
+#  NEW_FILENAME=`echo ${FILENAME} |sed -e 's/\//_/g'`
+#  NEW_FILENAME="${DATE}_${NEW_FILENAME}"
+#  mv -v "$FILENAME" ~/.local/share/Trash/files/"${NEW_FILENAME}" 2>&1 |grep -v "are the same file"
+#done
+mv $@ /tmp -f
