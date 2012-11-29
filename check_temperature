@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Takes a list of numbers (CPU core temperatures) and leaves the max in CPU_TEMP
+select_max_cpu_temp() {
+  CPU_TEMP=-1
+  while [ "$1" != "" ]; do
+    if [ "$1" -gt "${CPU_TEMP}" ]; then
+      CPU_TEMP=$1
+    fi
+    shift
+  done
+}
+
+
+
+[ "$1" != "" ] && SLEEP_TIME=$1 || SLEEP_TIME=30
+
+# echo -en "\033]2;temperature check\007"
+
+DATE="`date +\"%d%b-%H:%M\"`"
+FILE="/tmp/temperature_check_${DATE}.csv"
+echo "Measurement (every ${SLEEP_TIME} seconds from $DATE),Time,CPU,GPU,HDD" > $FILE
+
+MEASURE_TIMES_COUNTER=1
+while true; do
+    DATE="`date +\"%a %H:%M\"`"
+    echo -en "\033]2;(updating temperatures...)\007"
+    sudo true # check sudo-password before any measurement
+
+    ### CPU section ###
+    CPU0_TEMP="`sensors |grep "Core 0" |tr . " " |awk '{print($3)}' |tr -d '+'`"
+    CPU1_TEMP="`sensors |grep "Core 1" |tr . " " |awk '{print($3)}' |tr -d '+'`"
+    CPU_DIODE_TEMP="`sensors |grep "temp1" |tr . " " |awk '{print($2)}' |tr -d '+'`"
+    # CPU_MAX_TEMP="`sensors |grep "temp1" |awk '{print($5)}' |tr -d '°C' |tr -d '+'`"
+    select_max_cpu_temp $CPU0_TEMP $CPU1_TEMP $CPU_DIODE_TEMP
+
+    ### Graphics card section ###
+    GPU_TEMP="`sudo nvclock  -T 2>&1 |grep GPU |tr C " " |awk '{print($4)}'`" # Ignore stderr
+
+    ### HD section ###
+    HDD_TEMP="`sudo hddtemp /dev/sda |awk '{print($4)}' |tr -d '°C'`"
+
+    echo "${MEASURE_TIMES_COUNTER}, ${DATE}, CPU: ${CPU_TEMP}°C, GPU: ${GPU_TEMP}, HDD: ${HDD_TEMP}°C"
+    echo "${MEASURE_TIMES_COUNTER},${DATE},${CPU_TEMP},${GPU_TEMP},${HDD_TEMP}" >> $FILE
+    echo -en "\033]2;${HDD_TEMP}/${CPU_TEMP}/${GPU_TEMP} (temperature check)\007"
+    MEASURE_TIMES_COUNTER=$((MEASURE_TIMES_COUNTER+1))
+    sleep ${SLEEP_TIME} # Not too long, otherwise the sudo will timeout (e.g. up to 300, probably more)
+done
+
