@@ -1,7 +1,7 @@
 #!/bin/bash
 usage() {
-  echo "USAGE: busca <string> [<filter>] [<path>]"
-  echo "  e.g. busca myString \"*java\" src/uk/ac/lkl/migen/system/"
+  echo "USAGE: search <string> [<filter>] [<path>]"
+  echo "  e.g. search myString \"*java\" src/uk/ac/lkl/migen/system/"
   exit;
 }
 
