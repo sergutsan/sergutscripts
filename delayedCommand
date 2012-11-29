@@ -1,0 +1,4 @@
+#/bin/bash
+[ "" = "$1" ] && echo "USAGE: delayedCommand <seconds> <command> [parameter1] ... [parameterN]" && exit
+WAIT=$1 && shift && echo -en "\033]2;Waiting to launch '$*'\007" 
+sleep $WAIT && $* && echo -en "\033]2;Terminal\007"
