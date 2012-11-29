@@ -1,4 +1,11 @@
 #!/bin/bash
+###############################
+# Script that shows on screen #
+# the temperature of the CPU, #
+# the graphics card, and      #
+# the hard disk.              #
+###############################
+
 
 # Takes a list of numbers (CPU core temperatures) and leaves the max in CPU_TEMP
 select_max_cpu_temp() {
