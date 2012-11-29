@@ -1,0 +1,23 @@
+#!/bin/bash
+usage() {
+  echo "USAGE: busca <string> [<filter>] [<path>]"
+  echo "  e.g. busca myString \"*java\" src/uk/ac/lkl/migen/system/"
+  exit;
+}
+
+if [ "$1" = "--help" -o "$1" = "" ]; then
+  usage;
+fi
+
+STRING="$1"
+if [ "$2" = "" ]; then
+  FILTER="*java"
+else
+  FILTER="$2"
+fi
+if [ "$3" = "" ]; then
+  SRC=.
+else
+  SRC="$3"
+fi
+find "$SRC" -name "$FILTER" -exec grep "$STRING" -H \{\} \;
