@@ -1,0 +1,60 @@
+#!/bin/bash
+# This script check whether there is a DNS server 
+# correctly configured. In 2009-10 I was using an
+# Orange mobile broadband (3G) connections, and this
+# was an issue (the connection did not always 
+# configure correctly /etc/resolv/conf)
+#
+FISH="Little Orange Fish"
+#ORANGE_DNS0="193.36.79.100"
+#ORANGE_DNS1="193.36.79.101" 
+#ORANGE_DNS2="4.2.2.1"
+#ORANGE_DNS3="4.2.2.2"
+ORANGE_DNS_LIST="4.2.2.1 4.2.2.2 149.254.230.7 149.254.199.126 193.36.79.100 193.36.79.101"
+CONNECTED="false"
+SPACES="                                    "
+
+echo;echo;echo;echo;echo;echo;echo;
+echo -en "\033]2;$FISH\007"
+#if grep -q ${ORANGE_DNS0} /etc/resolv.conf; then 
+#  CONNECTED="true"
+#elif grep -q ${ORANGE_DNS1} /etc/resolv.conf; then 
+#  CONNECTED="true"
+#elif grep -q ${ORANGE_DNS2} /etc/resolv.conf; then 
+#  CONNECTED="true"
+#elif grep -q ${ORANGE_DNS3} /etc/resolv.conf; then 
+#  CONNECTED="true"
+#fi
+
+for SERVER in $ORANGE_DNS_LIST; do
+  if grep -q $SERVER /etc/resolv.conf; then
+    CONNECTED="true"
+  fi
+done
+
+echo "   ______"
+echo "  \`\"\"-.  \`\`\`\`\`-----.....__"
+echo "       \`.  .      .       \`-."
+echo "         :     .     .       \`."
+echo "   ,     :   .    .          _ :"
+echo "  : \`.   :                  (@) \`._"
+echo "   \`. \`..'     .     =\`-.       .__}"
+echo "     ;     .        =  ~  :     .-\""
+echo "   .' .'\`.   .    .  =.-'  \`._ .'"
+echo "  : .'   :               .   .'"
+echo "   '   .'  .    .     .   .-'"
+echo "     .'____....----''.'=.' "
+echo "    \"\"             .'.'"
+echo "                  ''\"'\` "
+
+if [ $CONNECTED = "true" ]; then
+  echo "$SPACES $FISH says:"
+  echo "$SPACES You are connected! :-)"
+else 
+  echo "$SPACES $FISH says:"
+  echo "$SPACES Sorry, you are not connected... :-("; 
+  echo "$SPACES Try to reconnect again."
+fi
+echo;echo;echo;echo;echo
+echo Press RETURN to continue...
+read return
