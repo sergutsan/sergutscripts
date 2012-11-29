@@ -1,0 +1,121 @@
+#!/bin/bash
+MSG=""
+TITLE_PREFIX=""
+MINUTES=0 # Minutes for the timer
+SECONDS=0 # Seconds for the timer
+PAUSE=60  # Time between updates. Default: 60"
+PRINT_SECONDS=false
+
+# Input: number of seconds left
+print_time_left() {
+  if [ ${PRINT_SECONDS} = true ]; then
+    print_minutes_seconds $1
+  else 
+    print_only_minutes $1
+  fi
+}
+
+print_only_minutes() {
+  if [ $1 -ge 60 ]; then
+    echo "$(($1/60))' left..."
+  else
+    echo "$1\" left..."
+  fi
+}
+
+print_minutes_seconds() {
+  MINUTES=$(($1/60))
+  SECONDS=$(($1-60*MINUTES))
+  if [ $MINUTES -lt 1 ]; then
+    echo "$SECONDS\" left..."
+  else
+    echo "$MINUTES' $SECONDS\" left..."
+  fi
+}
+
+set_message() {
+  MSG="$1"
+}
+
+set_title_prefix() {
+  TITLE_PREFIX="$1"
+}
+
+set_minutes() {
+  MINUTES=$1
+}
+
+set_pause() {
+  PAUSE=$1
+  if [ $PAUSE -lt 60 ]; then
+    PRINT_SECONDS=true
+  fi
+}
+
+set_seconds() {
+  SECONDS=$1
+}
+
+clear_window_title() {
+  echo -en "\033]2;Terminal\007"
+}
+
+set_window_title() {
+  echo -en "\033]2;$1 left\007"
+}
+
+usage() {
+  echo "USAGE: timer <[-m <minutes>] | [-s <seconds>]> [-p <pause in seconds>] [-t text] [-tp <title_prefix>]"
+  exit
+}
+
+while [ "$1" ]; do
+  if [ -z "$2" ]; then
+    usage
+  fi
+  case $1 in 
+    "-m")
+      set_minutes $2;
+      shift 2;
+      ;;
+    "-p")
+      set_pause $2;
+      shift 2;
+      ;;    
+    "-s")
+      set_seconds $2;
+      shift 2;
+      ;;
+    "-t")
+      set_message "$2"
+      shift 2;
+      ;;
+    "-tp")
+      set_title_prefix "$2"
+      shift 2;
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+if [ $MINUTES -eq 0 -a $SECONDS -eq 0 ]; then
+  usage
+else
+  TIME_LEFT=$((MINUTES*60+SECONDS))
+fi
+
+set_window_title
+# echo "Timer running for $MINUTES', $SECONDS\"..."
+while [ ${TIME_LEFT} -gt 0 ] ; do
+  print_time_left $TIME_LEFT
+  set_window_title "${TITLE_PREFIX}$((TIME_LEFT/60))'"
+  if [ $PAUSE -gt $TIME_LEFT ]; then
+    PAUSE=$TIME_LEFT
+  fi
+  sleep $PAUSE; 
+  TIME_LEFT=$((TIME_LEFT - PAUSE)) 
+done
+gnome-terminal -e "say_THE_END $MSG" --geometry 120x30+50+50
+clear_window_title
