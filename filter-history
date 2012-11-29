@@ -41,13 +41,16 @@ mv ${TMP} $1
 
 # Remove image-related operations
 cat $1 \
+  | grep -v JPG \
   | grep -v jpg \
+  | grep -v PNG \
   | grep -v png \
   > ${TMP}
 mv ${TMP} $1 
 
 # Remove video-related operations
 cat $1 \
+  | grep -v mkv    \
   | grep -v mpg    \
   | grep -v mpg123 \
   | grep -v part   \
@@ -58,9 +61,10 @@ cat $1 \
   > ${TMP}
 mv ${TMP} $1 
 
-# Remove man page viewing
+# Remove help-seeking commands
 cat $1 \
-  | grep -v "man " \
+  | grep -v "^man " \
+  | grep -v "^apropos " \
   > ${TMP}
 mv ${TMP} $1 
 
