@@ -1,0 +1,14 @@
+#!/bin/sh
+[ -z "$1" ] && PAUSE=10 || PAUSE="$1"
+echo
+echo "Ubuntu One status, updated every $PAUSE seconds (press Ctrl-C to quit):"
+echo
+while true; do 
+  date +%Hh%M.%S
+  echo -n "Uploading: "    && u1sdtool --current-transfers |grep written |wc -l ; 
+  echo -n "Downloading: "  && u1sdtool --current-transfers |grep read |wc -l ; 
+  echo -n "Queue length: " && u1sdtool --waiting |wc -l; 
+  echo; 
+  sleep $PAUSE; 
+done
+
