@@ -8,7 +8,7 @@ while [ $FINISHED != "true" ]; do
   set_term_title "Network use today: $NEW MB (remaining: $((LIMIT-(NEW-INITIAL))) Mb)"
   if [ $((NEW)) -gt $((INITIAL + LIMIT)) ]; then
     FINISHED="true"
-    MSG="Te pasaste (total net use: $NEW MB)!"
+    MSG="Time to stop (total net use: $NEW MB)!"
     gnome-terminal -e "say_THE_END $MSG" --geometry 120x30+50+50
   fi
   sleep 30
