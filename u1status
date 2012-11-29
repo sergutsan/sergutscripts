@@ -1,14 +1,43 @@
-#!/bin/sh
-[ -z "$1" ] && PAUSE=10 || PAUSE="$1"
-echo
-echo "Ubuntu One status, updated every $PAUSE seconds (press Ctrl-C to quit):"
-echo
-while true; do 
-  date +%Hh%M.%S
-  echo -n "Uploading: "    && u1sdtool --current-transfers |grep written |wc -l ; 
-  echo -n "Downloading: "  && u1sdtool --current-transfers |grep read |wc -l ; 
-  echo -n "Queue length: " && u1sdtool --waiting |wc -l; 
-  echo; 
-  sleep $PAUSE; 
-done
+#!/bin/bash
 
+print_progress() {
+  case $1 in
+    0) echo -en "\r|        ";; 
+    1) echo -en "\r/        ";; 
+    2) echo -en "\r-        ";; 
+    3) echo -en "\r\\        ";; 
+  esac
+}
+
+echo
+echo "Ubuntu One status (press Ctrl-C to quit):"
+echo
+SHOW=true
+COUNT=0
+UPLOADING_OLD=-1
+DOWNLOADING_OLD=-1
+QUEUE_LENGTH_OLD=-1
+while true; do 
+  DATE=`date +%Hh%M.%S`
+  UPLOADING=`u1sdtool --current-transfers |grep written |wc -l` # >= 0
+  DOWNLOADING=`u1sdtool --current-transfers |grep read |wc -l`  # >= 0
+  QUEUE_LENGTH=`u1sdtool --waiting |wc -l`                      # >= 0
+  if [ $UPLOADING != $UPLOADING_OLD -o $DOWNLOADING != $DOWNLOADING_OLD -o $QUEUE_LENGTH != $QUEUE_LENGTH_OLD ]; then  
+    SHOW="true"
+    UPLOADING_OLD=$UPLOADING
+    DOWNLOADING_OLD=$DOWNLOADING
+    QUEUE_LENGTH_OLD=$QUEUE_LENGTH
+  fi
+  if [ $SHOW = "true" ]; then
+    SHOW="false"
+    echo -en "\r$DATE:   "
+    echo -n "Up: "    && echo -n "`printf %3d $UPLOADING`"    && echo -en "\t"
+    echo -n "Down: "  && echo -n "`printf %3d $DOWNLOADING`"  && echo -en '\t'
+    echo -n "Queue: " && echo -n "`printf %3d $QUEUE_LENGTH`"
+    echo
+  else
+    COUNT=$(((COUNT+1) % 4))
+    print_progress $COUNT
+  fi
+  sleep .1; 
+done
