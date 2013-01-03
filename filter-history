@@ -58,6 +58,8 @@ cat $1 \
   | grep -v totem  \
   | grep -v wmv    \
   | grep -v zip    \
+  | grep -v rar    \
+  | grep -v unrar  \
   > ${TMP}
 mv ${TMP} $1 
 
