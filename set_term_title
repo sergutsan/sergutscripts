@@ -1,2 +1,4 @@
 #!/bin/bash
+echo "If it did not work, change the prompt: "
+echo 'export PS1="[\u@\h \w]\$ "'
 echo -en "\033]2;$*\007"
