@@ -1,7 +1,7 @@
 #!/bin/sh
 ######################################
 # Script that filters a history
-# (typ. .bash_history) to get rid
+# (e.g. ~/.bash_history) to get rid
 # of the clutter and leave only 
 # the commands that we may want
 # to reuse some weeks (or months)
@@ -41,25 +41,24 @@ mv ${TMP} $1
 
 # Remove image-related operations
 cat $1 \
-  | grep -v JPG \
-  | grep -v jpg \
-  | grep -v PNG \
-  | grep -v png \
+  | grep -vi JPG \
+  | grep -vi PNG \
   > ${TMP}
 mv ${TMP} $1 
 
 # Remove video-related operations
 cat $1 \
-  | grep -v mkv    \
-  | grep -v mpg    \
-  | grep -v mpg123 \
-  | grep -v part   \
-  | grep -v player \
-  | grep -v totem  \
-  | grep -v wmv    \
-  | grep -v zip    \
-  | grep -v rar    \
-  | grep -v unrar  \
+  | grep -vi mkv    \
+  | grep -vi mpg    \
+  | grep -vi mpg123 \
+  | grep -vi part   \
+  | grep -vi player \
+  | grep -vi totem  \
+  | grep -vi vlc    \
+  | grep -vi wmv    \
+  | grep -vi zip    \
+  | grep -vi rar    \
+  | grep -vi unrar  \
   > ${TMP}
 mv ${TMP} $1 
 
@@ -114,6 +113,7 @@ cat $1 \
   | grep -v "^gcc"    \
   | grep -v "^javac"  \
   | grep -v "^make "  \
+  | grep -v "tex "  \
   > ${TMP}
 mv ${TMP} $1 
 
