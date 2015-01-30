@@ -18,8 +18,8 @@ cat $TMP_WEB_FILE                      \
   | grep src                           \
   |awk 'BEGIN{FS="alt=\""}{print($2)}' \
   | awk 'BEGIN{FS="\""}{print($1)}'    \
-  | sort    \
-  | uniq -c \
+  | sort     \
+  | uniq -c  \
   | sort -r \
   | awk '    {                                            \
               total += $1;                                \
@@ -28,7 +28,7 @@ cat $TMP_WEB_FILE                      \
              }                                            \
           END{                                            \
               endogamy = (total / count) - 1;             \
-              normalized = endogamy / (1 + endogamy);     \
+              normalized = (endogamy/2) / (1 + (endogamy/2));     \
               print "\nEndogamy index: " normalized "\n"  \
              }' 
 # Indice de endogamia = (suma de puntuaciones de carisma / cuenta de opinadores únicos) - 1, normalizado de 0 a 1 (N/N+1)
