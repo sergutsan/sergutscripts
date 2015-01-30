@@ -20,7 +20,7 @@ cat $TMP_WEB_FILE                      \
   | awk 'BEGIN{FS="\""}{print($1)}'    \
   | sort     \
   | uniq -c  \
-  | sort -r \
+  | sort -rn \
   | awk '    {                                            \
               total += $1;                                \
               count += 1;                                 \
